@@ -1,0 +1,61 @@
+@use '../util/mixins.scss' as *;
+
+.handling {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    column-gap: 10px;
+  
+    img {
+      cursor: pointer;
+    }
+  
+    .icon {
+      &-repeat {
+        width: 24px;
+        height: 24px;
+        fill: #ff884d;
+        @include svgFill;
+        cursor: pointer;
+        fill: white;
+      }
+      
+      
+      &-sound {
+        width: 24px;
+        height: 24px;
+        fill: #ff884d;
+        @include svgFill;
+        cursor: pointer;
+        fill: white;
+      }
+  
+      &-shuffle {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        stroke: #ff884d;
+        fill: white;
+        @include svgStroke;
+        
+      }
+    }
+  
+    &__repeat {
+      &.active {
+        img {
+          fill: #a43700;
+        }
+      }
+    }
+  
+    &__sound {
+      position: relative;
+  
+      &:hover {
+        .volume {
+          display: block;
+        }
+      }
+    }
+  }

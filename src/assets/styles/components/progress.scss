@@ -1,0 +1,19 @@
+@use '../util/mixins.scss' as *;
+
+.progress {
+    width: 100%;
+    height: 50px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  
+    &-current {
+    //   background: #ff884d;
+      width: 400px;
+      border-radius: 5px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+    }
+  }

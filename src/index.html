@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Player</title>
+</head>
+
+<body>
+    <div class="root">
+        <main class="app">
+            <div class="content">
+                <div class="handling">
+                    <div class="handling__sound" title="Volume">
+                        <img src="./assets/img/music.svg" class="icon-sound">
+                        <div class="volume">
+                            <input min='0' max='1' step="0.1" type="range" name="volume" value="0.5"
+                                class="contols-volume" />
+                        </div>
+                    </div>
+                    <div class="handling__repeat" title="Repeat">
+                        <img src="./assets/img/repeat.svg" class="icon-repeat">
+                    </div>
+                    <div class="handling__shuffle" title="Shuffle">
+                        <img src="./assets/img/shuffle.svg" class="icon-shuffle">
+                    </div>
+                </div>
+                <div class="current">
+                </div>
+                <div class="list">
+                    <p class="list-title">Your playlist</p>
+                    <div class="items">
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
