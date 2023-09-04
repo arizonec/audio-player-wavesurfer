@@ -1,10 +1,44 @@
 @use '../util/mixins.scss' as *;
 
 .list {
+    &-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
     &-title {
       font-weight: 400;
       font-size: 22px;
       line-height: 25px;
       color: #dbf2db;
     }
+    &-add{
+        cursor: pointer;
+
+        svg {
+            width: 32px;
+            height: 32px;
+            margin-right: 27px;
+        }
+
+        &:hover {
+            svg{
+                fill: rgba(255,255,255,0.3);
+            }
+
+            svg path{
+                stroke: white;
+            }
+
+            svg circle{
+                stroke: white;
+            }
+        }
+    }
   }
+
+.items{
+    height: 200px;
+    overflow-y: scroll;
+    border-radius: 5px;
+}

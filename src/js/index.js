@@ -28,13 +28,30 @@ const renderWave = (src) => {
         responsive: true,
         url: src,
     });
+
+    waveElem.on('ready', () => {
+        const duration = waveElem.getDuration();
+        const timelineStart = document.querySelector('.timeline-start');
+        const timelineEnd = document.querySelector('.timeline-end');
+        timelineEnd.textContent = toMinutes(duration);
+
+        setInterval(() => {
+            const currentTime = waveElem.getCurrentTime();
+            timelineStart.textContent = toMinutes(currentTime)
+        }, 1000);
+    });
+
+    waveElem.on('finish', () => {
+
+        state.repeating ? waveElem.play() : handleNext();
+    })
 }
 
 const render = () => {
-    renderAudios();
+    renderAudios(data);
 }
 
-const renderAudios = () => {
+const renderAudios = (data) => {
     if (localStorage.length > 0) {
         for (let i = 0; i < localStorage.length; i++) {
             let key = localStorage.key(i);
@@ -91,15 +108,11 @@ const setCurrentItem = (itemId) => {
 
     if (!current) return;
 
-    // pauseCurrentAudio();
-
     state.current = current;
 
     currentItem.innerHTML = renderCurrentItem(current);
 
     renderWave(require(`../assets/audio/${current.link}`))
-
-    audioUpdatehandler(current);
 
     handlePlayer();
 
@@ -141,40 +154,148 @@ const renderCurrentItem = ({ link, track, group, duration, year }) => {
             </div>
             <div class="timeline">
                 <span class="timeline-start">00:00</span>
-                <span class="timeline-end">${toMinutes(duration)}</span>
+                <span class="timeline-end">00:00</span>
             </div>
             </div>
             </div>
             </div>`;
 };
 
-audioList.addEventListener('click', handleItem);
-
 const handlePlayer = () => {
     const play = document.querySelector('.controls-play');
     const next = document.querySelector('.controls-next');
     const prev = document.querySelector('.controls-prev');
 
-    play.addEventListener('click', () => waveElem.play());
-    // next.addEventListener('click', handleNext);
-    // prev.addEventListener('click', handlePrev);
+    play.addEventListener('click', handleAudioPlay);
+    next.addEventListener('click', handleNext);
+    prev.addEventListener('click', handlePrev);
 
     playButton = play;
 };
 
-const audioUpdatehandler = ({ audio }) => {
-    const timeline = document.querySelector('.timeline-start');
+const handleAudioPlay = () => {
+    const { playing } = state;
 
-    audio.addEventListener('timeupdate', ({ target }) => {
-        timeline.innerHTML = toMinutes(target.currentTime);
-    });
+    if (!playing) {
+        waveElem.play();
+    } else {
+        waveElem.pause();
+    }
 
-    waveElem.on('finish', ({ target }) => {
-        target.currentTime = 0;
+    state.playing = !playing;
 
-        state.repeating ? target.play() : handleNext();
-    })
+    playButton.classList.toggle('playing', !playing);
 };
+
+const handleNext = () => {
+    const { current } = state;
+    const currentItem = document.querySelector(`[data-id="${current.id}"]`);
+    const next = currentItem.nextSibling?.dataset;
+    const first = audioList.firstElementChild?.dataset;
+
+    const itemId = next?.id || first?.id;
+
+    if (!itemId) return;
+
+    setCurrentItem(itemId);
+};
+
+const handlePrev = () => {
+    const { current } = state;
+    const currentItem = document.querySelector(`[data-id="${current.id}"]`);
+    const prev = currentItem.previousSibling?.dataset;
+    const last = audioList.lastElementChild?.dataset;
+
+    const itemId = prev?.id || last?.id;
+
+    if (!itemId) return;
+
+    setCurrentItem(itemId);
+};
+
+const handleRepeat = ({ currentTarget }) => {
+    const { repeating } = state;
+
+    currentTarget.classList.toggle('active', !repeating);
+    state.repeating = !repeating;
+};
+
+const handleShuffle = () => {
+    const { children } = audioList;
+    const suffled = shuffle([...children]);
+
+    audioList.innerHTML = ' ';
+    suffled.forEach((item) => audioList.appendChild(item));
+};
+
+const addBtn = document.querySelector('.list-add');
+const modal = document.querySelector('.modal-add');
+const dropZone = document.querySelector('.modal-border');
+
+const addItem = () => {
+    modal.style.visibility = "visible";
+    currentItem.innerHTML = '';
+
+    initAdd();
+}
+
+const initAdd = () => {
+    const prevent = (e) => e.preventDefault();
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(
+        evtName => {
+            dropZone.addEventListener(evtName, prevent);
+        }
+    )
+
+    dropZone.addEventListener('drop', getAudioData);
+}
+
+const getAudioData = (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    if (files.length > 0) {
+        const file = files[0];
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const audioURL = event.target.result;
+            const splitName = file.name.split('-');
+            const track = (splitName[1].slice(0, -4));
+            const name = splitName[0];
+
+            const newItem = {
+                id: state.audios.length + 1,
+                link: audioURL,
+                name: name,
+                track: track,
+                year: 'not known'
+            }
+
+            // localStorage.setItem(newItem.id, JSON.stringify(newItem));
+            // Не получается добавить в localStorage, так как после 5 трэков сторадж переполняется и выдает ошибку, стерать из стораджа прошлые записи не вижу смысла!
+
+            // state.audios.push(newItem);
+
+
+            // audioList.innerHTML = '';
+            // renderAudios(state.audios);
+
+        };
+        reader.readAsDataURL(file);
+
+        modal.innerHTML = 'Ваш файл был успешно загружен.';
+        setTimeout(() => {
+            modal.style.visibility = "hidden";
+        }, 1000);
+    }
+}
+
+audioList.addEventListener('click', handleItem);
+repeatButton.addEventListener('click', handleRepeat);
+shuffleButton.addEventListener('click', handleShuffle);
+addBtn.addEventListener('click', addItem);
 
 render();
 
