@@ -232,70 +232,78 @@ const addBtn = document.querySelector('.list-add');
 const modal = document.querySelector('.modal-add');
 const dropZone = document.querySelector('.modal-border');
 
-const addItem = () => {
-    modal.style.visibility = "visible";
-    currentItem.innerHTML = '';
+// const addItem = () => {
+//     modal.style.visibility = "visible";
+//     currentItem.innerHTML = '';
 
-    initAdd();
-}
+//     initAdd();
+// }
 
-const initAdd = () => {
-    const prevent = (e) => e.preventDefault();
+// const initAdd = () => {
+//     const prevent = (e) => e.preventDefault();
 
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(
-        evtName => {
-            dropZone.addEventListener(evtName, prevent);
-        }
-    )
+//     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(
+//         evtName => {
+//             dropZone.addEventListener(evtName, prevent);
+//         }
+//     )
 
-    dropZone.addEventListener('drop', getAudioData);
-}
+//     dropZone.addEventListener('drop', getAudioData);
+// }
 
-const getAudioData = (e) => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
+// const getAudioData = (e) => {
+//     const dt = e.dataTransfer;
+//     const files = dt.files;
 
-    if (files.length > 0) {
-        const file = files[0];
+//     if (files.length > 0) {
+//         const file = files[0];
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const audioURL = event.target.result;
-            const splitName = file.name.split('-');
-            const track = (splitName[1].slice(0, -4));
-            const name = splitName[0];
+//         const reader = new FileReader();
+//         reader.onload = (event) => {
+//             // const audioURL = event.target.result;
+//             const audioBlob = new Blob([event.target.result], { type: file.type });
+//             const audioURL = URL.createObjectURL(audioBlob);
 
-            const newItem = {
-                id: state.audios.length + 1,
-                link: audioURL,
-                name: name,
-                track: track,
-                year: 'not known'
-            }
+//             const splitName = file.name.split('-');
+//             const track = (splitName[1].slice(0, -4));
+//             const name = splitName[0];
 
-            // localStorage.setItem(newItem.id, JSON.stringify(newItem));
-            // Не получается добавить в localStorage, так как после 5 трэков сторадж переполняется и выдает ошибку, стерать из стораджа прошлые записи не вижу смысла!
+//             const newItem = {
+//                 id: state.audios.length + 1,
+//                 link: audioURL,
+//                 name: name,
+//                 track: track,
+//                 year: 'not known'
+//             }
 
-            // state.audios.push(newItem);
+//             // localStorage.setItem(newItem.id, JSON.stringify(newItem));
+//             // Не получается добавить в localStorage, так как после 5 трэков сторадж переполняется и выдает ошибку, стерать из стораджа прошлые записи не вижу смысла!
+
+//             state.audios.push(newItem);
 
 
-            // audioList.innerHTML = '';
-            // renderAudios(state.audios);
+//             // audioList.innerHTML = '';
+//             // renderAudios(state.audios);
 
-        };
-        reader.readAsDataURL(file);
+//             console.log(state.audios);
 
-        modal.innerHTML = 'Ваш файл был успешно загружен.';
-        setTimeout(() => {
-            modal.style.visibility = "hidden";
-        }, 1000);
-    }
-}
+//             loadAudioData(newItem);
+
+//         };
+//         reader.readAsDataURL(file);
+
+//         modal.innerHTML = 'Ваш файл был успешно загружен.';
+//         setTimeout(() => {
+//             modal.style.visibility = "hidden";
+//         }, 1000);
+//     }
+// }
+
 
 audioList.addEventListener('click', handleItem);
 repeatButton.addEventListener('click', handleRepeat);
 shuffleButton.addEventListener('click', handleShuffle);
-addBtn.addEventListener('click', addItem);
+// addBtn.addEventListener('click', addItem);
 
 render();
 
