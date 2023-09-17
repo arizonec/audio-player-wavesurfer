@@ -1,0 +1,145 @@
+/* .handling {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    column-gap: 10px;
+  
+    img {
+      cursor: pointer;
+    }
+  
+    .icon {
+      &-repeat {
+        width: 24px;
+        height: 24px;
+        fill: purple;
+        cursor: pointer;
+        fill: white;
+
+        &:hover {
+            fill: lighten(purple, 15%);
+          }
+        
+          &:active {
+            fill: darken(purple, 15%);
+          }
+      }
+      
+      
+      &-sound {
+        width: 24px;
+        height: 24px;
+        fill: purple;
+        cursor: pointer;
+        fill: white;
+        &:hover {
+            fill: lighten(purple, 15%);
+          }
+        
+          &:active {
+            fill: darken(purple, 15%);
+          }
+      }
+  
+      &-shuffle {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        stroke: purple;
+        fill: white;
+        &:hover {
+            stroke: lighten(purple, 15%);
+          }
+        
+          &:active {
+            stroke: darken(purple, 15%);
+          }
+        
+      }
+    }
+  
+    &__repeat {
+      &.active {
+        img {
+          fill: #a43700;
+        }
+      }
+    }
+  
+    &__sound {
+      position: relative;
+  
+      &:hover {
+        .volume {
+          display: block;
+        }
+      }
+    }
+  } */
+
+
+.handling {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    column-gap: 10px;
+    margin-bottom: 20px;
+    color: rgba(255,255,255,0.5);
+}
+.handling img {
+    cursor: pointer;
+}
+.handling .icon-repeat {
+    width: 24px;
+    height: 24px;
+    fill: white;
+    cursor: pointer;
+    margin-right: 40px;
+}
+
+.handling .icon-repeat:hover {
+    stroke: purple;
+}
+.handling .icon-repeat path:hover {
+    stroke: purple;
+}
+
+.handling .active {
+    stroke: aqua;
+}
+
+.handling .icon-sound {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    fill: white;
+    margin-right: 40px;
+}
+.handling .icon-sound:hover {
+    fill: purple;
+}
+.handling .icon-sound:active {
+    fill: purple;
+}
+.handling .icon-shuffle {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    stroke: white;
+    fill: white;
+    margin-right: 40px;
+}
+.handling .icon-shuffle:hover {
+    stroke: purple;
+    opacity: 1;
+}
+.handling .icon-shuffle:active {
+    stroke: purple;
+    opacity: 1;
+}
+.handling__sound {
+    position: relative;
+}
+.handling__sound:hover .volume {
+    display: block;
+}

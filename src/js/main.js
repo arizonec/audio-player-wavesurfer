@@ -1,5 +1,5 @@
 import '../index.html';
-import '../assets/styles/style.scss';
+import '../assets/styles/style.css';
 import data from './audioData.js';
 import { toMinutes } from './timer';
 import { shuffle } from './shuffle';
@@ -8,19 +8,15 @@ import WaveSurfer from 'wavesurfer.js';
 
 const { audioList, currentItem, repeatButton, volumeButton, shuffleButton } = variables;
 
+let playButton = null;
+let waveElem = '';
+
 const state = {
     audios: [],
     current: {},
     repeating: false,
     playing: false,
 }
-let playButton = null;
-
-const render = () => {
-    renderAudios();
-}
-
-let waveElem = '';
 
 const renderWave = (src) => {
     waveElem = WaveSurfer.create({
@@ -28,113 +24,113 @@ const renderWave = (src) => {
         waveColor: 'violet',
         progressColor: 'purple',
         barWidth: 0.3,
-        barHeight: 0,
+        barHeight: 1,
         responsive: true,
+        url: src,
     });
 
-    waveElem.load(String(src));
+    waveElem.on('ready', () => {
+        const duration = waveElem.getDuration();
+        const timelineStart = document.querySelector('.timeline-start');
+        const timelineEnd = document.querySelector('.timeline-end');
+        timelineEnd.textContent = toMinutes(duration);
+
+        setInterval(() => {
+            const currentTime = waveElem.getCurrentTime();
+            timelineStart.textContent = toMinutes(currentTime)
+        }, 1000);
+    });
+
+    waveElem.on('finish', () => {
+        state.repeating ? waveElem.play() : setNext();
+    })
+
+    const volumeSlider = document.querySelector('.contols-volume');
+    const setVolume = () => {
+        waveElem.setVolume(volumeSlider.value);
+    };
+
+    setVolume();
+
+    volumeSlider.addEventListener('input', setVolume);
 }
 
-const handleShuffle = () => {
-    const { children } = audioList;
-    const suffled = shuffle([...children]);
+const render = () => {
+    renderAudios(data);
+}
 
-    audioList.innerHTML = ' ';
-    suffled.forEach((item) => audioList.appendChild(item));
-};
 
-const handleVolume = ({ target: { value } }) => {
-    const { current } = state;
 
-    state.volume = value;
 
-    if (!current?.audio) return;
 
-    // current.audio.volume = value;
-};
-
-const handleRepeat = ({ currentTarget }) => {
-    const { repeating } = state;
-
-    currentTarget.classList.toggle('active', !repeating);
-    state.repeating = !repeating;
-};
-
-const handleAudioPlay = () => {
-    const { playing, current } = state;
-    const { audio } = current;
-
-    if (!playing) {
-        audio.play();
-        waveElem.play();
+const renderAudios = (data) => {
+    if (localStorage.length > 0) {
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            let item = JSON.parse(localStorage.getItem(key));
+            state.audios = [...state.audios, item];
+            loadAudioData(item);
+        }
     } else {
-        audio.pause();
-        waveElem.pause();
+        data.forEach((item) => {
+            const audio = new Audio(require(`../assets/audio/${item.link}`));
+
+            audio.addEventListener('loadeddata', () => {
+                const newItem = { ...item, duration: audio.duration, audio };
+                localStorage.setItem(newItem.id, JSON.stringify(newItem));
+                state.audios = [...state.audios, newItem];
+                loadAudioData(newItem);
+            })
+        })
     }
-
-    state.playing = !playing;
-
-    playButton.classList.toggle('playing', !playing);
 };
 
-const handleNext = () => {
-    const { current } = state;
-    const currentItem = document.querySelector(`[data-id="${current.id}"]`);
-    const next = currentItem.nextSibling?.dataset;
-    const first = audioList.firstElementChild?.dataset;
-
-    const itemId = next?.id || first?.id;
-
-    if (!itemId) return;
-
-    setCurrentItem(itemId);
+const loadAudioData = (audio) => {
+    audioList.innerHTML += renderItem(audio);
 };
 
-const handlePrev = () => {
-    const { current } = state;
-    const currentItem = document.querySelector(`[data-id="${current.id}"]`);
-    const prev = currentItem.previousSibling?.dataset;
-    const last = audioList.lastElementChild?.dataset;
+const renderItem = ({ id, link, track, group, duration }) => {
+    console.log(link)
+    const [image] = link.split('.');
+    return `<div class="item" data-id="${id}">
+    <div class="item-image">
+        <img src="${require(`../assets/img/${image}.png`)}" alt="">
+    </div>
+    <div class="item-titles">
+        <h2 class="item-group">${group}</h2>
+        <h3 class="item-track">${track}</h3>
+    </div>
+    <p class="item-duration">${toMinutes(duration)}</p>
 
-    const itemId = prev?.id || last?.id;
-
-    if (!itemId) return;
-
-    setCurrentItem(itemId);
+    <button class="item-play">
+        <img src="${require(`../assets/img/play.svg`)}"  class="icon-play">
+    </button>
+</div>`;
 };
 
-const handlePlayer = () => {
-    const play = document.querySelector('.controls-play');
-    const next = document.querySelector('.controls-next');
-    const prev = document.querySelector('.controls-prev');
+const handleItem = ({ target }) => {
+    const { id } = target.dataset;
 
-    play.addEventListener('click', handleAudioPlay);
-    next.addEventListener('click', handleNext);
-    prev.addEventListener('click', handlePrev);
+    if (!id) return;
 
-    playButton = play;
+    setCurrentItem(id);
 };
 
-const audioUpdatehandler = ({ audio, duration }) => {
-    const progress = document.querySelector('.progress-current');
-    const timeline = document.querySelector('.timeline-start');
+const setCurrentItem = (itemId) => {
+    const current = state.audios.find(({ id }) => +id === +itemId);
 
-    audio.addEventListener('timeupdate', ({ target }) => {
-        const { currentTime } = target;
+    if (!current) return;
 
-        timeline.innerHTML = toMinutes(currentTime);
-        progress.style.width = `100%`;
-    });
+    state.current = current;
 
-    audio.addEventListener('ended', ({ target }) => {
-        target.currentTime = 0;
-        progress.style.width = `0%`;
+    currentItem.innerHTML = renderCurrentItem(current);
 
-        state.repeating ? target.play() : handleNext();
-    })
+    renderWave(require(`../assets/audio/${current.link}`))
+
+    playerManage();
 };
 
-const renderCurrentItem = ({ link, track, group, duration, year, audio }) => {
+const renderCurrentItem = ({ link, track, group, duration, year }) => {
     const [image] = link.split('.');
 
     return `<div class="current-image">
@@ -167,103 +163,85 @@ const renderCurrentItem = ({ link, track, group, duration, year, audio }) => {
             </div>
             <div class="timeline">
                 <span class="timeline-start">00:00</span>
-                <span class="timeline-end">${toMinutes(duration)}</span>
+                <span class="timeline-end">00:00</span>
             </div>
             </div>
             </div>
             </div>`;
 };
 
-const pauseCurrentAudio = () => {
-    const { current: { audio } } = state;
+const playerManage = () => {
+    const play = document.querySelector('.controls-play');
+    const next = document.querySelector('.controls-next');
+    const prev = document.querySelector('.controls-prev');
 
-    if (!audio) return;
+    play.addEventListener('click', handleAudioPlay);
+    next.addEventListener('click', setNext);
+    prev.addEventListener('click', setPrev);
 
-    audio.pause();
-    audio.currentTime = 0;
+    playButton = play;
 };
 
-const togglePlaying = () => {
-    const { playing, current } = state;
-    const { audio } = current;
+const handleAudioPlay = () => {
+    const { playing } = state;
 
-    if (playing) {
-        // audio.play();
+    if (!playing) {
         waveElem.play();
     } else {
-        // audio.pause();
         waveElem.pause();
     }
-    playButton.classList.toggle('playing', playing);
+
+    state.playing = !playing;
+
+    playButton.classList.toggle('playing', !playing);
 };
 
-const setCurrentItem = (itemId) => {
-    const current = state.audios.find(({ id }) => +id === +itemId);
+const setNext = () => {
+    const { current } = state;
+    const currentItem = document.querySelector(`[data-id="${current.id}"]`);
+    const next = currentItem.nextSibling?.dataset;
+    const first = audioList.firstElementChild?.dataset;
 
-    if (!current) return;
+    const itemId = next?.id || first?.id;
 
-    pauseCurrentAudio();
+    if (!itemId) return;
 
-    state.current = current;
-
-    currentItem.innerHTML = renderCurrentItem(current);
-
-    renderWave(require(`../assets/audio/${current.link}`))
-
-    audioUpdatehandler(current);
-
-    handlePlayer();
-
-    setTimeout(() => {
-        togglePlaying();
-    }, 10);
+    setCurrentItem(itemId);
 };
 
-const handleItem = ({ target }) => {
-    const { id } = target.dataset;
+const setPrev = () => {
+    const { current } = state;
+    const currentItem = document.querySelector(`[data-id="${current.id}"]`);
+    const prev = currentItem.previousSibling?.dataset;
+    const last = audioList.lastElementChild?.dataset;
 
-    if (!id) return;
+    const itemId = prev?.id || last?.id;
 
-    setCurrentItem(id);
+    if (!itemId) return;
+
+    setCurrentItem(itemId);
 };
 
-const renderItem = ({ id, link, track, group, genre, duration }) => {
-    const [image] = link.split('.');
-    return `<div class="item" data-id="${id}">
-    <div class="item-image">
-        <img src="${require(`../assets/img/${image}.png`)}" alt="">
-    </div>
-    <div class="item-titles">
-        <h2 class="item-group">${group}</h2>
-        <h3 class="item-track">${track}</h3>
-    </div>
-    <p class="item-duration">${toMinutes(duration)}</p>
+const setRepeat = ({ currentTarget }) => {
+    const { repeating } = state;
 
-    <button class="item-play">
-        <img src="${require(`../assets/img/play.svg`)}"  class="icon-play">
-    </button>
-</div>`;
+    currentTarget.classList.toggle('active', !repeating);
+    document.querySelector('.icon-repeat').classList.toggle('active');
+    state.repeating = !repeating;
 };
 
-const loadAudioData = (audio) => {
-    audioList.innerHTML += renderItem(audio);
+const setShuffle = () => {
+    const { children } = audioList;
+    const suffled = shuffle([...children]);
+
+    audioList.innerHTML = ' ';
+    suffled.forEach((item) => audioList.appendChild(item));
 };
 
-const renderAudios = () => {
-    data.forEach((item) => {
-        const audio = new Audio(require(`../assets/audio/${item.link}`));
-
-        audio.addEventListener('loadeddata', () => {
-            const newItem = { ...item, duration: audio.duration, audio };
-            state.audios = [...state.audios, newItem];
-            loadAudioData(newItem);
-        })
-    })
-};
 
 audioList.addEventListener('click', handleItem);
-repeatButton.addEventListener('click', handleRepeat);
-volumeButton.addEventListener('change', handleVolume);
-shuffleButton.addEventListener('click', handleShuffle);
+repeatButton.addEventListener('click', setRepeat);
+shuffleButton.addEventListener('click', setShuffle);
 
 render();
+

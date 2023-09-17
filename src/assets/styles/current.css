@@ -1,0 +1,108 @@
+/* 
+// .current {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     column-gap: 12px;
+  
+//     &-image {
+//         background-size: cover;
+//         background-repeat: no-repeat;
+//         background-position: center;
+
+//       img{
+//         width: 200px;
+//         height: 200px;
+//         border-radius: 12px;
+//         margin-bottom: 10px;
+//       }
+//     }
+  
+//     &-info {
+//       flex-grow: 1;
+//       display: flex;
+//       flex-direction: column;
+  
+//       &__top {
+//         display: flex;
+//         width: 200px;
+//         margin: 0 auto;
+//         justify-content: space-between;
+//       }
+  
+//       &__track {
+//         font-weight: 700;
+//         font-size: 24px;
+//         line-height: 28px;
+//         color: #ffffff;
+//         margin-top: 2px;
+//         margin-bottom: 20px;
+//       }
+  
+//       &__group {
+//         font-weight: 400;
+//         font-size: 14px;
+//         line-height: 16px;
+//         color: #dbf2db;
+//       }
+  
+//       &__year {
+//         font-weight: 400;
+//         font-size: 14px;
+//         line-height: 14px;
+//         color: #dbf2db;
+//       }
+//     }
+//   } */
+
+
+.current {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    column-gap: 12px;
+}
+.current-image {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-bottom: 10px;
+}
+.current-image img {
+    width: 200px;
+    height: 200px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 1px 1px 80px rgba(128, 0, 128, 0.8);
+}
+.current-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.current-info__top {
+    display: flex;
+    width: 200px;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+.current-info__track {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 28px;
+    color: #fff;
+    margin-top: 2px;
+    margin-bottom: 20px;
+}
+.current-info__group {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #dbf2db;
+}
+.current-info__year {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    color: #dbf2db;
+}

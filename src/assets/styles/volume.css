@@ -1,0 +1,27 @@
+/* .volume {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+  
+    input {
+      cursor: pointer;
+    }
+  } */
+
+.volume {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+}
+.volume input {
+    cursor: pointer;
+}
+

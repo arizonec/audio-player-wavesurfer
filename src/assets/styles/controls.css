@@ -1,0 +1,140 @@
+/* // .controls {
+//     margin-top: auto;
+  
+//     .icon {
+//       &-arrow {
+//         fill: #ff884d;
+//         width: 35px;
+//         height: 35px;
+//       }
+  
+//       &-pause {
+//         fill: none;
+//         stroke: #ff884d;
+//         display: none;
+//         width: 40px;
+//         height: 40px;
+//       }
+  
+//       &-play {
+//         fill: #ff884d;
+//         display: block;
+//         width: 40px;
+//         height: 40px;
+//       }
+//     }
+  
+//     img {
+//       cursor: pointer;
+  
+//       &:not(.icon-pause) {
+//         &:hover {
+//             fill: lighten(#ff884d, 15%);
+//           }
+        
+//         &:active {
+//             fill: darken(#ff884d, 15%);
+//           }
+//       }
+//     }
+  
+//     &-buttons {
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       column-gap: 45px;
+//       margin-bottom: 20px;
+//     }
+  
+//     &-button {
+//       cursor: pointer;
+  
+//       img {
+//         width: 27px;
+//         height: 27px;
+//       }
+
+//     }
+  
+//     &-play {
+//       &.playing {
+//         .icon {
+//           &-pause {
+//             display: block;
+//           }
+  
+//           &-play {
+//             display: none;
+//           }
+//         }
+//       }
+//     }
+
+//     &-next {
+//       display: block;
+//       transform: scale(-1, 1);
+//     }
+  
+//     &-progress {
+//       margin-top: 18px;
+//     }
+//   } */
+
+
+.controls {
+    margin-top: auto;
+}
+.controls .icon-arrow {
+    fill: #ff884d;
+    width: 35px;
+    height: 35px;
+}
+.controls .icon-pause {
+    fill: none;
+    stroke: #ff884d;
+    display: none;
+    width: 40px;
+    height: 40px;
+}
+.controls .icon-play {
+    fill: #ff884d;
+    display: block;
+    width: 40px;
+    height: 40px;
+}
+.controls img {
+    cursor: pointer;
+}
+.controls img:not(.icon-pause):hover {
+    fill: #ffbb9a;
+}
+.controls img:not(.icon-pause):active {
+    fill: #ff5501;
+}
+.controls-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 45px;
+    margin-bottom: 20px;
+}
+.controls-button {
+    cursor: pointer;
+}
+.controls-button img {
+    width: 27px;
+    height: 27px;
+}
+.controls-play.playing .icon-pause {
+    display: block;
+}
+.controls-play.playing .icon-play {
+    display: none;
+}
+.controls-next {
+    display: block;
+    transform: scale(-1, 1);
+}
+.controls-progress {
+    margin-top: 18px;
+}
