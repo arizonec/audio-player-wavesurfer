@@ -34,7 +34,7 @@
     flex-direction: column;
 }
 .app {
-    background: linear-gradient(180deg, #808080 0%, #2f4f4f 100%);
+    background: #808080;
     border-radius: 12px;
     padding: 24px 25px;
     margin-top: 34px;
